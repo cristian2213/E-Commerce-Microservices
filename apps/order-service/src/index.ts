@@ -1,11 +1,15 @@
-import Fastify from 'fastify'
+import Fastify, { FastifyRequest, FastifyReply } from 'fastify'
 
 const fastify = Fastify({
   logger: true,
 })
 
-fastify.get('/', (req, reply) => {
-  reply.send('Order service')
+fastify.get('/health', (req: FastifyRequest, reply: FastifyReply) => {
+  reply.status(200).send({
+    status: 'ok',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  })
 })
 
 const start = async () => {

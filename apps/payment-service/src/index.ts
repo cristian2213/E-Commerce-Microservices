@@ -1,10 +1,17 @@
 import { serve } from '@hono/node-server'
-import { Hono } from 'hono'
+import { Hono, Context } from 'hono'
 
 const app = new Hono()
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
+app.get('/health', (c: Context) => {
+  return c.json(
+    {
+      status: 'ok',
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
+    },
+    200,
+  )
 })
 
 const start = async () => {
