@@ -1,7 +1,10 @@
+import { clerkMiddleware, getAuth } from '@hono/clerk-auth'
 import { serve } from '@hono/node-server'
 import { Hono, Context } from 'hono'
 
 const app = new Hono()
+
+app.use('*', clerkMiddleware())
 
 app.get('/health', (c: Context) => {
   return c.json(
@@ -12,6 +15,17 @@ app.get('/health', (c: Context) => {
     },
     200,
   )
+})
+
+app.get('/test', (c: Context) => {
+  const auth = getAuth(c)
+  const userId = auth?.userId
+
+  if (!userId) {
+    return c.json({ message: 'You are not logged in' }, 401)
+  }
+
+  return c.json({ message: 'Order service authenticated' }, 200)
 })
 
 const start = async () => {
