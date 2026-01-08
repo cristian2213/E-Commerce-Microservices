@@ -1,8 +1,12 @@
 import Fastify, { FastifyRequest, FastifyReply } from 'fastify'
+import { clerkPlugin, getAuth } from '@clerk/fastify'
+import { shouldBeUser } from './middleware/authMiddleware.js'
 
 const fastify = Fastify({
   logger: true,
 })
+
+fastify.register(clerkPlugin)
 
 fastify.get('/health', (req: FastifyRequest, reply: FastifyReply) => {
   reply.status(200).send({
@@ -11,6 +15,14 @@ fastify.get('/health', (req: FastifyRequest, reply: FastifyReply) => {
     timestamp: new Date().toISOString(),
   })
 })
+
+fastify.get(
+  '/test',
+  { preHandler: shouldBeUser },
+  (req: FastifyRequest, reply: FastifyReply) => {
+    reply.send({ message: 'Order service authenticated', userId: req.userId })
+  },
+)
 
 const start = async () => {
   try {
