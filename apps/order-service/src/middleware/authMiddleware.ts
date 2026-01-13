@@ -31,7 +31,7 @@ export const shouldBeAdmin = async (
     return reply.status(401).send({ message: 'You are not logged in' })
   }
 
-  const claims = auth.sessionClaims as CustomJwtSessionClaims
+  const claims = auth.sessionClaims?.metadata as CustomJwtSessionClaims
 
   if (claims?.role !== 'admin') {
     return reply.status(403).send({ message: 'Unauthorized' })
